@@ -312,8 +312,8 @@ export class ApiService extends Construct {
 
     taskDefinition.addContainer('PluginDaemon', {
       image: customRepository
-        ? ecs.ContainerImage.fromEcrRepository(customRepository, `dify-plugin-daemon_main-local`)
-        : ecs.ContainerImage.fromRegistry(`langgenius/dify-plugin-daemon:main-local`),
+        ? ecs.ContainerImage.fromEcrRepository(customRepository, `dify-plugin-daemon_0.0.4-local`)
+        : ecs.ContainerImage.fromRegistry(`langgenius/dify-plugin-daemon:0.0.4-local`),
       environment: {
         GIN_MODE: 'release',
 
