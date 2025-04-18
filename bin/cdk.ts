@@ -31,6 +31,22 @@ export const props: EnvironmentProps = {
   // 必要に応じてIPv6も同様に設定可能
   allowedIPv6Cidrs: getAllowedIpRanges(process.env.ALLOWED_IPV6_CIDRS),
 
+  // Notion認証情報を環境変数から設定（両方の環境変数が存在する場合のみ）
+  additionalEnvironmentVariables: [
+    ...(process.env.NOTION_CLIENT_ID && process.env.NOTION_CLIENT_SECRET ? [
+      {
+        key: 'NOTION_CLIENT_ID',
+        value: process.env.NOTION_CLIENT_ID,
+        targets: ['api', 'worker']
+      },
+      {
+        key: 'NOTION_CLIENT_SECRET',
+        value: process.env.NOTION_CLIENT_SECRET,
+        targets: ['api', 'worker']
+      }
+    ] : [])
+  ],
+
   // Please see EnvironmentProps in lib/environment-props.ts for all the available properties
 };
 
@@ -38,9 +54,9 @@ const app = new cdk.App();
 
 let virginia: UsEast1Stack | undefined = undefined;
 if ((props.useCloudFront ?? true) && (props.domainName || props.allowedIPv4Cidrs || props.allowedIPv6Cidrs)) {
-  // add a unique suffix to prevent collision with different Dify instances in the same account.
+  // DifyのリージョンでWAFを作成するように変更
   virginia = new UsEast1Stack(app, `DifyOnAwsUsEast1Stack${props.subDomain ? `-${props.subDomain}` : ''}`, {
-    env: { region: 'us-east-1', account: props.awsAccount },
+    env: { region: props.awsRegion, account: props.awsAccount }, // us-east-1 から props.awsRegion に変更
     crossRegionReferences: true,
     domainName: props.domainName,
     allowedIpV4AddressRanges: props.allowedIPv4Cidrs,
