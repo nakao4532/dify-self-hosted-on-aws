@@ -56,7 +56,7 @@ let virginia: UsEast1Stack | undefined = undefined;
 if ((props.useCloudFront ?? true) && (props.domainName || props.allowedIPv4Cidrs || props.allowedIPv6Cidrs)) {
   // DifyのリージョンでWAFを作成するように変更
   virginia = new UsEast1Stack(app, `DifyOnAwsUsEast1Stack${props.subDomain ? `-${props.subDomain}` : ''}`, {
-    env: { region: props.awsRegion, account: props.awsAccount }, // us-east-1 から props.awsRegion に変更
+    env: { region: 'us-east-1', account: props.awsAccount },
     crossRegionReferences: true,
     domainName: props.domainName,
     allowedIpV4AddressRanges: props.allowedIPv4Cidrs,
