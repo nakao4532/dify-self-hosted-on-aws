@@ -33,9 +33,14 @@ export const props: EnvironmentProps = {
   // 必要に応じてIPv6も同様に設定可能
   allowedIPv6Cidrs: getAllowedIpRanges(process.env.ALLOWED_IPV6_CIDRS),
 
-  // Notion認証情報を環境変数から設定（両方の環境変数が存在する場合のみ）
+  // Notion認証情報を環境変数から設定（環境変数が存在する場合のみ）
   additionalEnvironmentVariables: [
     ...(process.env.NOTION_CLIENT_ID && process.env.NOTION_CLIENT_SECRET ? [
+      {
+        key: 'NOTION_INTEGRATION_TYPE',
+        value: 'public',
+        targets: ['api', 'worker']
+      },
       {
         key: 'NOTION_CLIENT_ID',
         value: process.env.NOTION_CLIENT_ID,
@@ -44,6 +49,18 @@ export const props: EnvironmentProps = {
       {
         key: 'NOTION_CLIENT_SECRET',
         value: process.env.NOTION_CLIENT_SECRET,
+        targets: ['api', 'worker']
+      }
+    ] : []),
+    ...(process.env.NOTION_INTERNAL_SECRET ? [
+      {
+        key: 'NOTION_INTEGRATION_TYPE',
+        value: 'internal',
+        targets: ['api', 'worker']
+      },
+      {
+        key: 'NOTION_INTERNAL_SECRET',
+        value: process.env.NOTION_INTERNAL_SECRET,
         targets: ['api', 'worker']
       }
     ] : [])
